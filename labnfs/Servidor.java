@@ -28,16 +28,6 @@ public class Servidor2 {
         // laço infinito do servidor
         while (true) {
             System.out.println("Cliente: " + socket.getInetAddress());
-//            File dir = new File(currentDir);
-//            String mensagem = dis.readUTF();
-//            System.out.println(currentDir);
-
-//            dos.writeUTF("Li sua mensagem: " + mensagem);
-//            System.out.println(origem.toAbsolutePath().getFileSystem().getFileStores().toString());
-//            System.out.println(File.listRoots());
-//            Files.walk(Paths.get("Z:\\carlos\\nfs-sockets"))
-//                    .filter(Files::isRegularFile)
-//                    .forEach(System.out::println);
             String[] command = dis.readUTF().split(" ");
             System.out.println(command[0]);
             switch (command[0]) {
