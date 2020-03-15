@@ -1,5 +1,6 @@
 package labnfs;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -22,13 +23,14 @@ public class Servidor2 {
         // pegando uma referência do canal de entrada do socket. Ao ler deste canal, está se recebendo os dados
         // enviados pelo servidor
         DataInputStream dis = new DataInputStream(socket.getInputStream());
-        Path origem = Paths.get("Z:\\carlos\\nfs-sockets");
+        String currentDir = "C:\\Users\\Carlo\\Desktop\\distribu-da-master\\labnfs";
+        Path origem = Paths.get(currentDir);
         // laço infinito do servidor
         while (true) {
             System.out.println("Cliente: " + socket.getInetAddress());
-            File dir = new File("Z:\\carlos\\nfs-sockets");
-            String mensagem = dis.readUTF();
-            System.out.println(mensagem);
+//            File dir = new File(currentDir);
+//            String mensagem = dis.readUTF();
+//            System.out.println(currentDir);
 
 //            dos.writeUTF("Li sua mensagem: " + mensagem);
 //            System.out.println(origem.toAbsolutePath().getFileSystem().getFileStores().toString());
@@ -36,10 +38,12 @@ public class Servidor2 {
 //            Files.walk(Paths.get("Z:\\carlos\\nfs-sockets"))
 //                    .filter(Files::isRegularFile)
 //                    .forEach(System.out::println);
-
-            switch (mensagem) {
+            String[] command = dis.readUTF().split(" ");
+            System.out.println(command[0]);
+            switch (command[0]) {
                 case "readdir":
-                    File folder = new File("Z:\\carlos\\nfs-sockets");
+                    currentDir = command[1];
+                    File folder = new File(currentDir);
                     File[] listOfFiles = folder.listFiles();
                     String out = "\n";
                     for (File file : listOfFiles) {
@@ -48,29 +52,36 @@ public class Servidor2 {
                             System.out.println(file.getName());
                         }
                     }
-                    dos.writeUTF(out);
+                    dos.writeUTF("Listagem de arquivos\n" + out);
                     break;
                 case "create":
-                    File newfile = new File("Z:\\carlos\\nfs-sockets\\file.txt");
+                    currentDir = command[1];
+                    File newfile = new File(currentDir);
                     newfile.createNewFile();
+                    dos.writeUTF("Arquivo criado com sucesso");
                     break;
                 case "delete":
-                    File delfile = new File("Z:\\carlos\\nfs-sockets\\file.txt");
+                    currentDir = command[1];
+                    File delfile = new File(currentDir);
                     delfile.delete();
+                    dos.writeUTF("Arquivo deletado com sucesso");
                     break;
+                case "rename":
+                    String oldName = command[1];
+                    String newName = command[2];
+                    File f1 = new File(oldName);
+                    File f2 = new File(newName);
+                    boolean b = f1.renameTo(f2);
+                    dos.writeUTF("Arquivo renomeado com sucesso");
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + command[0]);
             }
 
 
 
         }
 
-
-        /*
-         * Observe o while acima. Perceba que primeiro se lê a mensagem vinda do cliente (linha 29, depois se escreve
-         * (linha 32) no canal de saída do socket. Isso ocorre da forma inversa do que ocorre no while do Cliente2,
-         * pois, de outra forma, daria deadlock (se ambos quiserem ler da entrada ao mesmo tempo, por exemplo,
-         * ninguém evoluiria, já que todos estariam aguardando.
-         */
     }
 
 
