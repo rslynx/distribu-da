@@ -1,0 +1,4 @@
+com\gugawag\pdist\servlets\UsuarioServlet.class
+com\gugawag\pdist\model\Usuario.class
+com\gugawag\pdist\ejbs\UsuarioDAO.class
+com\gugawag\pdist\ejbs\UsuarioService.class
